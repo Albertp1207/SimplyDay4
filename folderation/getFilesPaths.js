@@ -1,32 +1,36 @@
-const { lstatSync,readdirSync } = require("fs");
-const { join } = require("path")
+const { lstat,readdir } = require("fs");
+const { join } = require("path");
+
+const promisify = require("./promisify");
+
+const lstatPromise = promisify(lstat);
+const readdirPromise = promisify(readdir);
 
 
-const getFilesPaths = dirname => {
+function getFilesPaths(dirname) { 
+    readdirPromise(dirname)
+        .then(files => {   
+            files.forEach(file => {
+                let filePath = join(dirname,file);
+                lstatPromise(filePath)
+                    .then(data => {                            
+                        return data.isDirectory();
+                    })
+                    .then(isDirectory => {                        
 
-    return new Promise((resolve,reject)=>{
-        let filesPaths = [];
+                        if(isDirectory) {
+                            getFilesPaths(filePath)
+                        } else {
+                            console.log(filePath)
+                        }
+                    })
+                    .catch(err => {
+                        throw err
+                    })
+            })
+        })                 
+}    
 
-        function getFiles(dirname) { 
-            let files = readdirSync(dirname);
-    
-            for(let i = 0; i < files.length; i++) {
-                let filePath = join(dirname,files[i]);
-                let isDirectory = lstatSync(filePath).isDirectory();
-                if(isDirectory){
-                    getFiles(filePath)
-                } else {
-                    filesPaths.push(filePath)
-                }
-            }
-    
-        }
-        getFiles(dirname);  
-
-        resolve(filesPaths)
-    })
-    
-}
 
 module.exports = getFilesPaths;
 

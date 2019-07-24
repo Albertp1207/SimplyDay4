@@ -9,15 +9,15 @@ const getFilesPathsSync = dirname => {
     function getFiles(dirname) { 
         let files = readdirSync(dirname);
 
-        for(let i = 0; i < files.length; i++) {
-            let filePath = join(dirname,files[i]);
+        files.forEach(file => {
+            let filePath = join(dirname,file);
             let isDirectory = lstatSync(filePath).isDirectory();
             if(isDirectory){
                 getFiles(filePath)
             } else {
                 filesPaths.push(filePath)
             }
-        }
+        })
 
     }
     getFiles(dirname);
