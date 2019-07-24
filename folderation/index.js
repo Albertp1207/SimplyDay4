@@ -6,5 +6,4 @@ const getFilesPathsSync = require("./getFilesPathsSync");
 getFilesPaths(__dirname);
 
 const files = getFilesPathsSync(__dirname)
-console.log("files paths by getFilesPathsSync function")
 console.log(files)

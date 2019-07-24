@@ -13,12 +13,8 @@ function getFilesPaths(dirname) {
             files.forEach(file => {
                 let filePath = join(dirname,file);
                 lstatPromise(filePath)
-                    .then(data => {                            
-                        return data.isDirectory();
-                    })
-                    .then(isDirectory => {                        
-
-                        if(isDirectory) {
+                    .then(stats => {   
+                        if(stats.isDirectory()) {
                             getFilesPaths(filePath)
                         } else {
                             console.log(filePath)
